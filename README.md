@@ -1,6 +1,6 @@
 # Quartz
 
-![](https://github.com/novodias/Quartz/raw/main/Quartz/assets/Quartz.webp)
+![](https://raw.githubusercontent.com/novodias/Quartz/main/Quartz/assets/Icon.webp)
 
 This is a Minecraft Server GUI made with Windows Forms
 
