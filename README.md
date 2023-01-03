@@ -1,6 +1,6 @@
 # Quartz
 
-![Quartz](Quartz/assets/Quartz.webp)
+![](Quartz/assets/Quartz.webp?raw=true)
 
 This is a Minecraft Server GUI made with Windows Forms
 
