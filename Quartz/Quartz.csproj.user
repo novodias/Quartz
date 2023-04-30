@@ -3,18 +3,5 @@
   <PropertyGroup>
     <_LastSelectedProfileId>C:\Users\Novodias\source\repos\MinecraftServerGUI\MinecraftServerGUI\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Update="Configuration.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Main.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SearchForms.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="ServerPropertiesForms.cs">
-      <SubType>Form</SubType>
-    </Compile>
-  </ItemGroup>
+  <ItemGroup />
 </Project>

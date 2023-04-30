@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quartz", "MinecraftServerGUI\Quartz.csproj", "{FA650598-F170-4458-B0C4-EF6FD37EEBED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quartz", "Quartz\Quartz.csproj", "{FA650598-F170-4458-B0C4-EF6FD37EEBED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quartz.Forms", "Quartz.Forms\Quartz.Forms.csproj", "{F640BBCA-0A65-4963-9899-12678EAF8579}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{FA650598-F170-4458-B0C4-EF6FD37EEBED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA650598-F170-4458-B0C4-EF6FD37EEBED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA650598-F170-4458-B0C4-EF6FD37EEBED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F640BBCA-0A65-4963-9899-12678EAF8579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F640BBCA-0A65-4963-9899-12678EAF8579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F640BBCA-0A65-4963-9899-12678EAF8579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F640BBCA-0A65-4963-9899-12678EAF8579}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
