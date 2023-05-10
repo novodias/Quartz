@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz.Forms\\Quartz.Forms.csproj",
-        "projectName": "Quartz.Forms",
+        "projectName": "Quartz",
         "projectPath": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz.Forms\\Quartz.Forms.csproj",
         "packagesPath": "C:\\Users\\Novodias\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz.Forms\\obj\\",
@@ -84,7 +84,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz\\Quartz.csproj",
-        "projectName": "Quartz",
+        "projectName": "QuartzLib",
         "projectPath": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz\\Quartz.csproj",
         "packagesPath": "C:\\Users\\Novodias\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz\\obj\\",

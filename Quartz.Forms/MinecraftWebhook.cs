@@ -1,5 +1,7 @@
-﻿using Discord.Webhook;
+﻿using Discord;
+using Discord.Webhook;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Quartz.Forms
 {
@@ -23,14 +25,14 @@ namespace Quartz.Forms
             {
                 return _url;
             }
-            set
-            {
-                _url = value;
-                if (!string.IsNullOrWhiteSpace(value)) 
-                { 
-                    _webhookClient = new DiscordWebhookClient(value);
-                }
-            }
+            //set
+            //{
+            //    _url = value;
+            //    if (!string.IsNullOrWhiteSpace(value)) 
+            //    { 
+            //        _webhookClient = new DiscordWebhookClient(value);
+            //    }
+            //}
         }
 
         public MinecraftWebhook() 
@@ -56,6 +58,28 @@ namespace Quartz.Forms
             }
             
             await _webhookClient.SendMessageAsync(text:message, username:player);
+        }
+
+        public bool TrySetWebhookUrl(string url) 
+        {
+            if (!url.StartsWith("https://") || !url.Contains("discord.com/api/webhooks"))
+            {
+                return false;
+            }
+
+            _url = url;
+
+            return true;
+        }
+
+        public void Init()
+        {
+            if (string.IsNullOrWhiteSpace(Url))
+            {
+                throw new NullReferenceException(nameof(Url));
+            }
+
+            _webhookClient = new DiscordWebhookClient(Url);
         }
 
         public static MinecraftWebhook LoadOrCreate()

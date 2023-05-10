@@ -41,8 +41,8 @@ namespace Quartz.Forms
 
                 var serverDir = new FileInfo(openDialog.FileName);
                 _quartz.LoadServer(serverDir);
-                SelectServerJar.Text = _quartz.ServerFileName;
-                var files = _quartz.ServerDirectory?.GetFiles();
+                SelectServerJar.Text = _quartz.Name;
+                var files = _quartz.Directory?.GetFiles();
 
                 if (files is null || !files.Any(f => f.Name == "eula.txt"))
                 {
@@ -55,7 +55,7 @@ namespace Quartz.Forms
                         return;
                     }
 
-                    File.AppendAllText(Path.Join(_quartz.ServerDirectory?.FullName, "eula.txt"), "eula=true");
+                    File.AppendAllText(Path.Join(_quartz.Directory?.FullName, "eula.txt"), "eula=true");
                 }
 
                 ChangeEnabledConfigurationButtons(true);
@@ -65,31 +65,31 @@ namespace Quartz.Forms
 
         private void ServerSettingsButton_Click(object sender, EventArgs e)
         {
-            if (_quartz.ServerFileName == "")
+            if (_quartz.Name == "")
             {
                 MessageBox.Show("Please select a server .jar file");
                 return;
             }
 
-            if (_quartz.ServerDirectory is null)
+            if (_quartz.Directory is null)
             {
                 MessageBox.Show("The directory of the server is not valid.");
                 return;
             }
 
-            var serverPropertiesForms = new ServerPropertiesForms(_quartz.ServerDirectory);
+            var serverPropertiesForms = new ServerPropertiesForms(_quartz.Directory);
             serverPropertiesForms.Show();
         }
 
         private void AddPluginButton_Click(object sender, EventArgs e)
         {
-            if (_quartz.ServerFileName == "")
+            if (_quartz.Name == "")
             {
                 MessageBox.Show("Please select a server .jar file");
                 return;
             }
 
-            var serverFiles = _quartz.ServerDirectory?.GetDirectories();
+            var serverFiles = _quartz.Directory?.GetDirectories();
 
             if (serverFiles is null || serverFiles.Length == 0)
             {
@@ -133,7 +133,7 @@ namespace Quartz.Forms
 
         private void OpenFolderButton_Click(object sender, EventArgs e)
         {
-            if (_quartz.ServerFileName == "" || _quartz.ServerDirectory is null)
+            if (_quartz.Name == "" || _quartz.Directory is null)
             {
                 return;
             }
@@ -141,7 +141,7 @@ namespace Quartz.Forms
             var info = new ProcessStartInfo()
             {
                 FileName = "explorer.exe",
-                Arguments = _quartz.ServerDirectory?.FullName
+                Arguments = _quartz.Directory?.FullName
             };
 
             Process.Start(info);

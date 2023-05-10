@@ -77,7 +77,7 @@
             this.SelectServerJar.Name = "SelectServerJar";
             this.SelectServerJar.Size = new System.Drawing.Size(227, 28);
             this.SelectServerJar.TabIndex = 1;
-            this.SelectServerJar.Text = "Select the server .jar";
+            this.SelectServerJar.Text = "Open Server";
             this.SelectServerJar.UseVisualStyleBackColor = true;
             this.SelectServerJar.Click += new System.EventHandler(this.SelectServerJar_Click);
             // 
@@ -153,7 +153,7 @@
             this.ServerSettingsButton.Name = "ServerSettingsButton";
             this.ServerSettingsButton.Size = new System.Drawing.Size(227, 28);
             this.ServerSettingsButton.TabIndex = 21;
-            this.ServerSettingsButton.Text = "Server Settings";
+            this.ServerSettingsButton.Text = "Settings";
             this.ServerSettingsButton.UseVisualStyleBackColor = true;
             this.ServerSettingsButton.Click += new System.EventHandler(this.ServerSettingsButton_Click);
             // 
@@ -184,7 +184,7 @@
             this.OpenFolderButton.Name = "OpenFolderButton";
             this.OpenFolderButton.Size = new System.Drawing.Size(227, 28);
             this.OpenFolderButton.TabIndex = 12;
-            this.OpenFolderButton.Text = "Open Folder";
+            this.OpenFolderButton.Text = "Folder";
             this.OpenFolderButton.UseVisualStyleBackColor = true;
             this.OpenFolderButton.Click += new System.EventHandler(this.OpenFolderButton_Click);
             // 

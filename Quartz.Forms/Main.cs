@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Text;
 using Quartz;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Quartz.Forms
 {
@@ -12,7 +11,9 @@ namespace Quartz.Forms
         private Quartz _quartz;
         private MinecraftWebhook _webhook;
         private Presets _presets;
-        private TextBuilder _outputBuilder = new TextBuilder();
+        private IList<string> _messages;
+        private IList<string> _logs;
+        //private TextBuilder _outputBuilder = new TextBuilder();
 
         public Main()
         {
@@ -46,12 +47,13 @@ namespace Quartz.Forms
             _webhook = MinecraftWebhook.LoadOrCreate();
             WebhookUrlTextBox.Text = _webhook.Url ?? "";
             DiscordWebhookCheckBox.Checked = _webhook.Enabled;
+            
+            _messages = new List<string>();
+            _logs = new List<string>();
         }
 
         private void AppendLine(string text)
         {
-            AppendLine(text);
-
             OutputRichTextBox.Invoke((MethodInvoker)delegate
             {
                 OutputRichTextBox.AppendText(text + Environment.NewLine);
@@ -66,26 +68,39 @@ namespace Quartz.Forms
             }
         }
 
-        private async Task GetProcessRuntime()
+        private async Task SetupProcessRuntime()
         {
-            while (true)
+            await WaitUntil(() =>
             {
                 if (!_quartz.IsOpen)
-                {
-                    break;
-                }
-
-                // Don't put fire on the CPU
-                await Task.Delay(1000);
+                    return true;
 
                 ActivityTime.Invoke((MethodInvoker)delegate
                 {
-                    if (_quartz.IsOpen)
-                    {
-                        ActivityTime.Text = string.Format("Activity Time: {0:hh\\:mm\\:ss}", _quartz.Runtime);
-                    }
+                    ActivityTime.Text = string.Format("Activity Time: {0:hh\\:mm\\:ss}", _quartz.Runtime);
                 });
-            }
+
+                return false;
+            }, 1000, 0);
+
+            //while (true)
+            //{
+            //    if (!_quartz.IsOpen)
+            //    {
+            //        break;
+            //    }
+
+            //    // Don't put fire on the CPU
+            //    await Task.Delay(1000);
+
+            //    ActivityTime.Invoke((MethodInvoker)delegate
+            //    {
+            //        if (_quartz.IsOpen)
+            //        {
+            //            ActivityTime.Text = string.Format("Activity Time: {0:hh\\:mm\\:ss}", _quartz.Runtime);
+            //        }
+            //    });
+            //}
         }
 
         #region Start/Stop
@@ -96,7 +111,6 @@ namespace Quartz.Forms
 
             try
             {
-                GetProcessRuntime();
                 await _quartz.Start(MemoryTypeFlags.Gigabytes, memory);
             }
             catch (Exception)
@@ -104,8 +118,6 @@ namespace Quartz.Forms
                 throw;
             }
         }
-
-
         
         private Task Stop()
         {
@@ -130,7 +142,7 @@ namespace Quartz.Forms
 
         #region Events
         private void OnPlayerJoined(object sender, PlayerEventArgs e)
-        {    
+        {
             PlayersListBox.Items.Add(e.Player);
         }
 
@@ -141,14 +153,13 @@ namespace Quartz.Forms
 
         private void OnPlayerMessage(object sender, PlayerEventArgs e)
         {
-            _ = Task.Run(async () =>
-            {
-                await _webhook.PostAsync(e.Player, e.Message);
-            });
+            _messages.Add(e.Player + ": " + e.Message);
+            _webhook.PostAsync(e.Player, e.Message);
         }
 
         private void OnProcessOutputData(object sender, string e)
         {
+            _logs.Add(e);
             AppendLine(e);
         }
 
@@ -174,12 +185,13 @@ namespace Quartz.Forms
             KillButton.Enabled = true;
             OpenButton.Enabled = false;
             
-            Task.Run(async () => await Start());
+            Start();
+            SetupProcessRuntime();
         }
 
         private void KillButton_Click(object sender, EventArgs e)
         {
-            Task.Run(Stop);
+            Stop();
         }
 
         private void clearOutput_Click(object sender, EventArgs e)
@@ -194,7 +206,7 @@ namespace Quartz.Forms
                 return;
             }
 
-            Task.Run(() => _quartz.SendInput(SendTextBox.Text));
+            _quartz.SendInput(SendTextBox.Text);
         }
 
         private void SendTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -205,8 +217,36 @@ namespace Quartz.Forms
             }
 
             e.Handled = true;
-            
-            Task.Run(() => _quartz.SendInput(SendTextBox.Text));
+
+            _quartz.SendInput(SendTextBox.Text);
+        }
+
+        /// <summary>
+        /// Waits to the condition to return true.
+        /// 
+        /// Set waitSeconds to 0, to wait indefinitely.
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="millisecondsDelay"></param>
+        /// <param name="waitSeconds"></param>
+        /// <returns></returns>
+        private async Task WaitUntil(Func<bool> condition, int millisecondsDelay = 500, int waitSeconds = 10)
+        {
+            var now = DateTime.Now;
+            var later = now.AddSeconds(waitSeconds);
+
+            while (true) 
+            {
+                if (condition.Invoke()) break;
+                if (now > later)
+                {
+                    if (waitSeconds > 0)
+                    {
+                        break;
+                    }
+                }
+                await Task.Delay(millisecondsDelay);
+            }
         }
 
         private void SaveAndCloseButton_Click(object sender, EventArgs e)
@@ -221,17 +261,14 @@ namespace Quartz.Forms
 
             Task.Run(async () => 
             {
-                _quartz.SendInput("stop");
+                await _quartz.SendInput("stop");
                 SaveAndCloseButton.Invoke(() => SaveAndCloseButton.Text = "Waiting");
 
-                while(_quartz.IsOpen)
-                {
-                    await Task.Delay(500);
-                }
+                await WaitUntil(() => !_quartz.IsOpen, waitSeconds: 0);
 
                 SaveAndCloseButton.Invoke(() => SaveAndCloseButton.Text = "Save And Close");
                 SaveAndCloseButton.Invoke(() => SaveAndCloseButton.Enabled = true);
-                _quartz.Kill();
+                await _quartz.Kill();
             });
         }
 
@@ -242,7 +279,7 @@ namespace Quartz.Forms
                 return;
             }
 
-            Task.Run(() => _quartz.SendInput("save-all flush"));
+            _quartz.SendInput("save-all flush");
         }
 
         private void ClearCommandButton_Click(object sender, EventArgs e)
@@ -252,7 +289,8 @@ namespace Quartz.Forms
 
         private void SearchButton_Click(object sender, EventArgs e)
         {
-            var searchForms = new SearchForms(_outputBuilder.GetText());
+            //var text = OutputRichTextBox.Text.Split(Environment.NewLine);
+            var searchForms = new SearchForms(_logs.AsReadOnly());
             searchForms.Show();
         }
 
@@ -324,13 +362,13 @@ namespace Quartz.Forms
 
             var name = PresetNameTextBox.Text;
 
-            if (_quartz.ServerFileName == "")
+            if (_quartz.Name == "")
             {
                 MessageBox.Show("Minecraft server .jar is not selected", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
            
-            var path = _quartz.ServerFileFullName;
+            var path = _quartz.FullName;
             var memoryAllocated = MemoryAllocationTextBox.Text ?? "2";
 
             if (JavaPathComboBox.SelectedItem == null)
@@ -391,24 +429,28 @@ namespace Quartz.Forms
         private void DiscordWebhookCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             var url = WebhookUrlTextBox.Text;
-            if (!url.StartsWith("https://") || !url.Contains("discord.com/api/webhooks"))
+            //if (!url.StartsWith("https://") || !url.Contains("discord.com/api/webhooks"))
+            //{
+            //    DiscordWebhookCheckBox.Checked = false;
+            //    _webhook.Enabled = false;
+            //    return;
+            //}
+
+            if (!_webhook.TrySetWebhookUrl(url)) 
             {
                 DiscordWebhookCheckBox.Checked = false;
                 _webhook.Enabled = false;
                 return;
             }
 
-            Task.Run(() =>
+            _webhook.Enabled = DiscordWebhookCheckBox.Checked;
+
+            if (_webhook.Url == url)
             {
-                _webhook.Enabled = DiscordWebhookCheckBox.Checked;
+                return;
+            }
 
-                if (_webhook.Url == url)
-                {
-                    return;
-                }
-
-                _webhook.Url = url;
-            });
+            _webhook.Init();
         }
 
         private void OutputRichTextBox_LinkClicked(object sender, LinkClickedEventArgs e)

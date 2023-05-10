@@ -31,9 +31,9 @@ public class Quartz : IDisposable
         }
     }
 
-    public string ServerFileName => _server?.Name ?? "";
-    public string ServerFileFullName => _server?.FullName ?? "";
-    public DirectoryInfo? ServerDirectory => _server.Directory;
+    public string Name => _server?.Name ?? "";
+    public string FullName => _server?.FullName ?? "";
+    public DirectoryInfo? Directory => _server.Directory;
     public TimeSpan Runtime => (DateTime.Now - _process?.StartTime) 
         ?? TimeSpan.Zero;
     #endregion
@@ -93,6 +93,22 @@ public class Quartz : IDisposable
         _server = file;
     }
 
+    public static string GetJavaRegistryValue(string directory)
+    {
+        //string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+        
+        string javaKey = $@"SOFTWARE\JavaSoft\{directory}";
+
+        using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+        {
+            string currentVersion = rk.GetValue("CurrentVersion").ToString();
+            using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+            {
+                return key.GetValue("JavaHome").ToString();
+            }
+        }
+    }
+
     public void FindJavaInstallationsPaths()
     {
         var baseDir = new DirectoryInfo(AppContext.BaseDirectory);
@@ -115,31 +131,34 @@ public class Quartz : IDisposable
             textInfo
         };
 
-        string environmentPath = Environment.GetEnvironmentVariable("JAVA_HOME");
+        string? environmentPath = Environment.GetEnvironmentVariable("JAVA_HOME");
         if (!string.IsNullOrEmpty(environmentPath))
         {
             javas.Add(environmentPath);
         }
 
-        string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-        using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
-        {
-            string currentVersion = rk.GetValue("CurrentVersion").ToString();
-            using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
-            {
-                javas.Add(key.GetValue("JavaHome").ToString());
-            }
-        }
+        //string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+        //using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+        //{
+        //    string currentVersion = rk.GetValue("CurrentVersion").ToString();
+        //    using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+        //    {
+        //        javas.Add(key.GetValue("JavaHome").ToString());
+        //    }
+        //}
 
-        string JDK = "SOFTWARE\\JavaSoft\\JDK\\";
-        using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(JDK))
-        {
-            string currentVersion = rk.GetValue("CurrentVersion").ToString();
-            using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
-            {
-                javas.Add(key.GetValue("JavaHome").ToString());
-            }
-        }
+        //string JDK = "SOFTWARE\\JavaSoft\\JDK\\";
+        //using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(JDK))
+        //{
+        //    string currentVersion = rk.GetValue("CurrentVersion").ToString();
+        //    using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+        //    {
+        //        javas.Add(key.GetValue("JavaHome").ToString());
+        //    }
+        //}
+
+        javas.Add(GetJavaRegistryValue("Java Runtime Environment"));
+        javas.Add(GetJavaRegistryValue("JDK"));
 
         javasFile = new(Path.Join(baseDir.FullName, "javalocations.txt"));
 
@@ -194,7 +213,7 @@ public class Quartz : IDisposable
         _process.BeginErrorReadLine();
         await _process.WaitForExitAsync().ConfigureAwait(false);
 
-        _process.Dispose();
+        _process?.Dispose();
         _process = null;
                 
         _players.Clear();

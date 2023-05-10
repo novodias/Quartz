@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quartz", "Quartz\Quartz.csproj", "{FA650598-F170-4458-B0C4-EF6FD37EEBED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quartz.Forms", "Quartz.Forms\Quartz.Forms.csproj", "{F640BBCA-0A65-4963-9899-12678EAF8579}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quartz.Forms", "Quartz.Forms\Quartz.Forms.csproj", "{F640BBCA-0A65-4963-9899-12678EAF8579}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -118,17 +118,17 @@
           "lib/netcoreapp2.0/_._": {}
         }
       },
-      "Quartz/1.0.0": {
+      "QuartzLib/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
           "Newtonsoft.Json": "13.0.2"
         },
         "compile": {
-          "bin/placeholder/Quartz.dll": {}
+          "bin/placeholder/QuartzLib.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Quartz.dll": {}
+          "bin/placeholder/QuartzLib.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.WindowsDesktop.App.WindowsForms"
@@ -347,7 +347,7 @@
         "version.txt"
       ]
     },
-    "Quartz/1.0.0": {
+    "QuartzLib/1.0.0": {
       "type": "project",
       "path": "../Quartz/Quartz.csproj",
       "msbuildProject": "../Quartz/Quartz.csproj"
@@ -357,7 +357,7 @@
     "net7.0-windows7.0": [
       "Discord.Net.Webhook >= 3.9.0",
       "Newtonsoft.Json >= 13.0.2",
-      "Quartz >= 1.0.0"
+      "QuartzLib >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -368,7 +368,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz.Forms\\Quartz.Forms.csproj",
-      "projectName": "Quartz.Forms",
+      "projectName": "Quartz",
       "projectPath": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz.Forms\\Quartz.Forms.csproj",
       "packagesPath": "C:\\Users\\Novodias\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Novodias\\source\\repos\\Quartz\\Quartz.Forms\\obj\\",
