@@ -5,3 +5,8 @@ Quartz.Forms/obj
 Quartz.Avalonia/bin
 Quartz.Avalonia/obj
 .vs
+Quartz.Forms/obj/Debug/net7.0-windows/Quartz.Forms.assets.cache
+Quartz.Forms/obj/Debug/net7.0-windows/Quartz.Forms.csproj.AssemblyReference.cache
+Quartz.Forms/obj/project.assets.json
+Quartz.Forms/obj/project.nuget.cache
+Quartz.Forms/obj/Quartz.Forms.csproj.nuget.dgspec.json
