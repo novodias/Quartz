@@ -1,0 +1,136 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:QuartzAvalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="600"
+		Width="1000" Height="450"
+        x:Class="QuartzAvalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Quartz"
+		WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+	<StackPanel Orientation="Horizontal"
+				Spacing="10">
+		<Border
+			BorderBrush="Gray"
+			BorderThickness="2"
+			CornerRadius="3"
+			HorizontalAlignment="Left"
+			Padding="8"
+			Margin="10 10 0 10">
+			<Panel>
+				<StackPanel Width="200"
+							HorizontalAlignment="Left" VerticalAlignment="Top"
+							Spacing="2" >
+					<Label Content="Configuration" FontWeight="Bold" />
+					<Button Name="Open" Content="Open"
+							Width="200"/>
+					<Button Name="Folder" Content="Folder"
+							Width="200"/>
+					<Button Name="Settings" Content="Settings"
+							Width="200"/>
+					<Button Name="AddPlugin" Content="Add Plugins"
+							Width="200"/>
+					<CheckBox Name="ScrollToEndCheckBox">Always scroll to end</CheckBox>
+				</StackPanel>
+				<StackPanel Width="200" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+							Orientation="Vertical" Spacing="10">
+					<TextBox Name="MemoryTextBox" Width="200" Margin="0 0 0 0"
+								Watermark="Memory (Default: 2G)"
+								FontSize="12" VerticalContentAlignment="Center" />
+					<ComboBox Name="JavaComboBox"
+								Width="200"
+								PlaceholderText="Java Runtime Path"
+								FontSize="12">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding}" />
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+					<StackPanel Orientation="Horizontal" Spacing="2">
+						<Button Name="Kill" Content="Kill" HorizontalContentAlignment="Center"
+								Width="99"/>
+						<Button Name="Start" Content="Start" HorizontalContentAlignment="Center"
+								Width="99" Background="#1cac39"/>
+					</StackPanel>
+				</StackPanel>
+			</Panel>
+		</Border>
+		<Border BorderBrush="Gray"
+			BorderThickness="2"
+			CornerRadius="3"
+			Padding="8"
+			Margin="0 10 0 10">
+			<StackPanel Orientation="Vertical" 
+						Spacing="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+						Background="BlueViolet">
+				<Panel>
+					<StackPanel Orientation="Horizontal">
+						<Border Name="ServerStatus" Background="Crimson" Width="24" CornerRadius="4" />
+						<Label Name="ServerName" Content="Server" FontWeight="Bold" />
+					</StackPanel>
+					<Label Name="ServerRuntime" HorizontalAlignment="Right" Content="Runtime: 00:00:00"/>
+				</Panel>
+				<AvaloniaEdit:TextEditor Name="Editor"
+					Text="This is the output console."
+					ShowLineNumbers="False"
+					Background="#2b2b2b"	 
+					IsReadOnly="True"
+					MinHeight="345" MinWidth="500"
+					Padding="8"
+					FontSize="12"
+					WordWrap="True"
+					FontFamily="Cascadia Code,Consolas,Menlo,Monospace"/>
+
+				<StackPanel Spacing="5" Orientation="Horizontal">
+					<TextBox Name="CommandTextBox" Watermark="Command"/>
+					<Button Name="Send" Content="Send"/>
+					<Button Name="Clear" Content="Clear"/>
+				</StackPanel>
+				
+			</StackPanel>
+		</Border>
+		<StackPanel Orientation="Vertical" 
+					HorizontalAlignment="Right"
+					Margin="0 10" Spacing="10" Width="220" Background="Red">
+			<Border BorderBrush="Gray"
+				BorderThickness="2"
+				CornerRadius="3"
+				HorizontalAlignment="Left"
+				Padding="8">
+				<StackPanel>
+					<Label Content="Players" FontWeight="Bold"></Label>
+					<ListBox Name="PlayersListBox" Width="200" MinHeight="285">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding}"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</StackPanel>
+			</Border>
+			<Border BorderBrush="Gray"
+				BorderThickness="2"
+				CornerRadius="3"
+				HorizontalAlignment="Left"
+				Padding="8"
+				Margin="0 0 0 10">
+				<StackPanel Spacing="10" Width="200">
+					<CheckBox Name="DiscordCheckBox" Content="Enable Discord Webhook"/>
+					<TextBox Name="DiscordTextBox" Watermark="URL Webhook"/>
+				</StackPanel>
+			</Border>
+		</StackPanel>
+	</StackPanel>
+
+</Window>

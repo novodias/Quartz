@@ -30,10 +30,11 @@ public class Quartz : IDisposable
             return true;
         }
     }
+    public bool IsLoaded => Name != "";
 
     public string Name => _server?.Name ?? "";
     public string FullName => _server?.FullName ?? "";
-    public DirectoryInfo? Directory => _server.Directory;
+    public DirectoryInfo? Directory => _server?.Directory;
     public TimeSpan Runtime => (DateTime.Now - _process?.StartTime) 
         ?? TimeSpan.Zero;
     #endregion
@@ -52,6 +53,7 @@ public class Quartz : IDisposable
     // Process Related
     public event EventHandler<string>? ProcessOutputData = null;
     public event EventHandler<EventArgs>? ProcessExited = null;
+    public event EventHandler<EventArgs>? ProcessStarted = null;
     #endregion
 
     public Quartz()
@@ -208,6 +210,7 @@ public class Quartz : IDisposable
         };
 
         _process.Start();
+        ProcessStarted?.Invoke(this, new EventArgs());
         _process.OutputDataReceived += OnOutputDataReceived;
         _process.BeginOutputReadLine();
         _process.BeginErrorReadLine();
@@ -238,6 +241,11 @@ public class Quartz : IDisposable
             _process.Kill();
             _process.Dispose();
             _process = null;
+        }
+
+        if (_process == null)
+        {
+            ProcessExited?.Invoke(this, new EventArgs());
         }
 
         _players.Clear();
