@@ -11,6 +11,7 @@ using Avalonia.Threading;
 using AvaloniaEdit.Rendering;
 using Avalonia.Collections;
 using System.Collections.ObjectModel;
+using QuartzAvalonia.Files;
 
 namespace QuartzAvalonia.Views
 {
@@ -20,6 +21,7 @@ namespace QuartzAvalonia.Views
         private readonly Quartz.Quartz Quartz;
 
         private IList<string> Logs { get; }
+        private MinecraftWebhook Webhook { get; }
         private ObservableCollection<string> Players { get; set; }
 
         private void OnProcessOutputData(object? sender, string data)
@@ -154,7 +156,12 @@ namespace QuartzAvalonia.Views
         {
             if (!Quartz.IsLoaded)
             {
-                await MessageBox.Show(this, "The server is not selected, please select the server and try again.", "Server not selected", MessageBox.MessageBoxButtons.Ok);
+                await MessageBox.Show(this, 
+                    "The server is not selected, please select the server and try again.", 
+                    "Server not selected", 
+                    MessageBox.MessageBoxButtons.Ok
+                );
+
                 return;
             }
 

@@ -16,6 +16,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using QuartzAvalonia.Files;
+using Discord;
 
 namespace QuartzAvalonia.Views
 {
@@ -62,8 +64,10 @@ namespace QuartzAvalonia.Views
             Quartz.PlayerLeft += OnPlayerLeft;
             Quartz.ProcessExited += OnProcessExited;
             Quartz.ProcessStarted += OnProcessStarted;
-
+            Quartz.PlayerMessage += OnPlayerMessage;
             JavaComboBox.Items = Quartz.Javas;
+
+            Webhook = MinecraftWebhook.LoadOrCreate();
 
             Players = new ObservableCollection<string>();
             PlayersListBox.Items = Players;
@@ -76,10 +80,15 @@ namespace QuartzAvalonia.Views
             Clear.IsEnabled = false;
         }
 
+        private void OnPlayerMessage(object? sender, PlayerEventArgs e)
+        {
+            Webhook.PostAsync(e.Player, e.Message);
+        }
+
         private void OnProcessStarted(object? sender, EventArgs e)
         {
             SetupProcessRuntime();
-            ServerStatus.Background = new SolidColorBrush(Color.Parse("#1cac39"));
+            ServerStatus.Background = new SolidColorBrush(Avalonia.Media.Color.Parse("#1cac39"));
             Kill.IsEnabled = true;
             Open.IsEnabled = false;
             Start.IsEnabled = false;
@@ -89,7 +98,7 @@ namespace QuartzAvalonia.Views
 
         private void OnProcessExited(object? sender, EventArgs e)
         {
-            ServerStatus.Background = new SolidColorBrush(Color.Parse("#DC143C"));
+            ServerStatus.Background = new SolidColorBrush(Avalonia.Media.Color.Parse("#DC143C"));
             Send.IsEnabled = false;
             Clear.IsEnabled = false;
             Kill.IsEnabled = false;
@@ -124,30 +133,51 @@ namespace QuartzAvalonia.Views
 
             CommandTextBox.KeyUp += CommandTextBox_KeyUp;
 
+            DiscordCheckBox.Checked += DiscordCheckBox_Checked;
+
             Closing += OnClosing;   
+        }
+
+        private void DiscordCheckBox_Checked(object? sender, RoutedEventArgs e)
+        {
+            if (!DiscordCheckBox.IsChecked.HasValue) return;
+
+            var url = DiscordTextBox.Text;
+
+            if (!Webhook.TrySetWebhookUrl(url))
+            {
+                DiscordCheckBox.IsChecked = Webhook.Enabled = false;
+                return;
+            }
+
+            Webhook.Enabled = DiscordCheckBox.IsChecked.Value;
+
+            if (Webhook.Url == url)
+            {
+                return;
+            }
+
+            Webhook.Init();
         }
 
         private async void OnClosing(object? sender, CancelEventArgs e)
         {
             e.Cancel = true;
 
-            if (Quartz.IsOpen)
+            if (!Quartz.IsOpen)
             {
-                var result = await MessageBox.Show(this,
-                    "Your server is still open, do you want to kill it? Notice that this may cause lost progress.", 
-                    "Server still open",
-                    MessageBox.MessageBoxButtons.OkCancel
-                );
-
-                if (result == MessageBox.MessageBoxResult.Ok)
-                {
-                    await StopServer();
-                    e.Cancel = false;
-                    // Close();
-                } 
+                e.Cancel = false;
             }
-            else
+
+            var result = await MessageBox.Show(this,
+                "Your server is still open, do you want to kill it? Notice that this may cause lost progress.",
+                "Server still open",
+                MessageBox.MessageBoxButtons.OkCancel
+            );
+
+            if (result == MessageBox.MessageBoxResult.Ok)
             {
+                await StopServer();
                 e.Cancel = false;
             }
         }
@@ -207,7 +237,6 @@ namespace QuartzAvalonia.Views
             }
 
             var directories = Quartz.Directory!.GetDirectories();
-
             if (directories is null || directories.Length == 0)
             {
                 await MessageBox.Show(this,
@@ -247,7 +276,12 @@ namespace QuartzAvalonia.Views
         {
             if (!Quartz.IsLoaded)
             {
-                await MessageBox.Show(this, "The server is not selected, please select the server and try again.", "Server not selected", MessageBox.MessageBoxButtons.Ok);
+                await MessageBox.Show(this, 
+                    "The server is not selected, " +
+                    "please select the server and try again.", 
+                    "Server not selected", 
+                    MessageBox.MessageBoxButtons.Ok
+                );
                 return;
             }
 
