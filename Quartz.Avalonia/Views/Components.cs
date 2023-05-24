@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using QuartzAvalonia.Files;
 using Discord;
+using QuartzAvalonia.ViewModels;
 
 namespace QuartzAvalonia.Views
 {
@@ -55,6 +56,7 @@ namespace QuartzAvalonia.Views
         {
             InitializeComponent();
 
+            Editor.Text = "";
             Logs = new List<string>();
 
             Quartz = new();
@@ -67,27 +69,43 @@ namespace QuartzAvalonia.Views
             Quartz.PlayerMessage += OnPlayerMessage;
             JavaComboBox.Items = Quartz.Javas;
 
-            Webhook = MinecraftWebhook.LoadOrCreate();
 
             Players = new ObservableCollection<string>();
             PlayersListBox.Items = Players;
 
             AddEvents();
-            Editor.Text = "";
 
             // Enable it upon the server start
             Send.IsEnabled = false;
             Clear.IsEnabled = false;
+
+            Webhook = MinecraftWebhook.LoadOrCreate();
+
+            if (!string.IsNullOrWhiteSpace(Webhook.Url))
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    DiscordTextBox.Text = Webhook.Url;
+                    DiscordCheckBox.IsChecked = Webhook.Enabled;
+                });
+                Webhook.Init();
+            }
+            else
+            {
+                DiscordCheckBox.IsChecked = false;
+            }
         }
 
         private void OnPlayerMessage(object? sender, PlayerEventArgs e)
         {
+            #pragma warning disable CS4014
             Webhook.PostAsync(e.Player, e.Message);
         }
 
         private void OnProcessStarted(object? sender, EventArgs e)
         {
             SetupProcessRuntime();
+            #pragma warning restore
             ServerStatus.Background = new SolidColorBrush(Avalonia.Media.Color.Parse("#1cac39"));
             Kill.IsEnabled = true;
             Open.IsEnabled = false;
@@ -123,6 +141,7 @@ namespace QuartzAvalonia.Views
             Settings.Click += SettingsButton_OnClick;
             AddPlugin.Click += AddPluginButton_OnClick;
 
+            PresetsButton.Click += PresetsButton_Click;
             Start.Click += StartButton_OnClick;
             Kill.Click += KillButton_OnClick;
             
@@ -133,27 +152,68 @@ namespace QuartzAvalonia.Views
 
             CommandTextBox.KeyUp += CommandTextBox_KeyUp;
 
-            DiscordCheckBox.Checked += DiscordCheckBox_Checked;
+            //DiscordCheckBox.Checked += DiscordCheckBox_Checked;
+            //DiscordCheckBox.PointerReleased += DiscordCheckBox_Checked;
+            DiscordCheckBox.Click += DiscordCheckBox_Checked;
+            DiscordTextBox.AddHandler(TextInputEvent, DiscordTextBox_TextInput, RoutingStrategies.Tunnel);
 
-            Closing += OnClosing;   
+            Closing += OnClosing;
+        }
+
+        private async void PresetsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            Server? preset = null;
+
+            if (Quartz.IsLoaded)
+            {
+                if (JavaComboBox.SelectedIndex != -1)
+                {
+                    preset = new Server()
+                    {
+                        Name = Quartz.Name,
+                        Path = Quartz.FullName,
+                        Memory = MemoryTextBox.Text,
+                        JavaIndex = JavaComboBox.SelectedIndex
+                    };
+                }
+            }
+
+            //var presetsWindow = new PresetsView()
+            //{
+            //    DataContext = new PresetsViewModel(preset)
+            //};
+
+            //presetsWindow.ShowDialog(this);
+
+            var server = await PresetsView.ShowPresets(this, preset);
+            if (server != null) 
+            {
+                Quartz.LoadServer(server.Value.Path);
+                ServerName.Content = server.Value.Name;
+                MemoryTextBox.Text = server.Value.Memory;
+                JavaComboBox.SelectedIndex = server.Value.JavaIndex;
+            }
+        }
+
+        private void DiscordTextBox_TextInput(object? sender, Avalonia.Input.TextInputEventArgs e)
+        {
+            DiscordCheckBox.IsChecked = Webhook.Enabled = false;
         }
 
         private void DiscordCheckBox_Checked(object? sender, RoutedEventArgs e)
         {
-            if (!DiscordCheckBox.IsChecked.HasValue) return;
-
             var url = DiscordTextBox.Text;
+
+            Webhook.Enabled = DiscordCheckBox.IsChecked!.Value;
+
+            if (Webhook.Url == url)
+            {
+                return;
+            }
 
             if (!Webhook.TrySetWebhookUrl(url))
             {
                 DiscordCheckBox.IsChecked = Webhook.Enabled = false;
-                return;
-            }
-
-            Webhook.Enabled = DiscordCheckBox.IsChecked.Value;
-
-            if (Webhook.Url == url)
-            {
                 return;
             }
 
@@ -167,6 +227,7 @@ namespace QuartzAvalonia.Views
             if (!Quartz.IsOpen)
             {
                 e.Cancel = false;
+                Webhook.Save();
             }
 
             var result = await MessageBox.Show(this,
@@ -178,6 +239,7 @@ namespace QuartzAvalonia.Views
             if (result == MessageBox.MessageBoxResult.Ok)
             {
                 await StopServer();
+                Webhook.Save();
                 e.Cancel = false;
             }
         }
@@ -280,6 +342,17 @@ namespace QuartzAvalonia.Views
                     "The server is not selected, " +
                     "please select the server and try again.", 
                     "Server not selected", 
+                    MessageBox.MessageBoxButtons.Ok
+                );
+                return;
+            }
+
+            if (JavaComboBox.SelectedItem == null)
+            {
+                await MessageBox.Show(this,
+                    "The java runtime is not selected, " +
+                    "please select and try again.",
+                    "Server not selected",
                     MessageBox.MessageBoxButtons.Ok
                 );
                 return;

@@ -5,10 +5,16 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\quartz-logo.ico</ApplicationIcon>
+	<AssemblyName>Quartz</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\quartz-logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +36,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quartz\Quartz.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\PresetsWindow.axaml.cs">
+      <DependentUpon>PresetsWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 

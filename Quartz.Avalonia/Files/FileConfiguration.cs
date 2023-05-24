@@ -11,9 +11,9 @@ namespace Quartz.Avalonia.Files
     abstract public class FileConfiguration
     {
         private readonly static string _dir = "configuration";
-        private static string _path => Path.Combine(AppContext.BaseDirectory, _dir, Name);
-
-        protected static string Name = "";
+        private string _path => Path.Combine(AppContext.BaseDirectory, _dir, Name);
+        
+        protected string Name;
 
         protected FileConfiguration()
         {
@@ -38,7 +38,7 @@ namespace Quartz.Avalonia.Files
             return result;
         }
 
-        public void Save()
+        public virtual void Save()
         {
             var dir = new DirectoryInfo(Path.Combine(AppContext.BaseDirectory, _dir));
 

@@ -21,8 +21,8 @@ namespace QuartzAvalonia.Views
         private readonly Quartz.Quartz Quartz;
 
         private IList<string> Logs { get; }
-        private MinecraftWebhook Webhook { get; }
-        private ObservableCollection<string> Players { get; set; }
+        private MinecraftWebhook Webhook { get; set; }
+        private ObservableCollection<string> Players { get; }
 
         private void OnProcessOutputData(object? sender, string data)
         {
@@ -65,11 +65,15 @@ namespace QuartzAvalonia.Views
                     {
                         number += digit;
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
                 return int.Parse(number);
             }
 
-            var text = MemoryTextBox.Text;
+            var text = MemoryTextBox.Text ?? "1";
             var memory = ParseNumber(text);
             MemoryTypeFlags memoryType;
             if (text.Contains("G"))
