@@ -14,6 +14,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="data\Close-Icon-64x64.png" />
+    <None Remove="data\MinecraftIcon_128x128.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="data\Close-Icon-64x64.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\MinecraftIcon_128x128.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\quartz-logo.ico" />
   </ItemGroup>
 

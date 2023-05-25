@@ -59,44 +59,5 @@ namespace QuartzAvalonia.Files
 
         [JsonProperty("java")]
         public int JavaIndex { get; set; }
-
-        [JsonIgnore]
-        public Bitmap? Icon
-        {
-            get
-            {
-                var icon = GetIcon();
-                if (icon is null) return null;
-                return new Bitmap(icon);
-            }
-        }
-        
-        private string? GetIcon()
-        {
-            var dir = new DirectoryInfo(Path);
-
-            if (!dir.Exists) return null;
-
-            static bool MatchExtension(string extension)
-            {
-                if (extension == ".jpg" || 
-                    extension == ".png" || 
-                    extension == ".webp" || 
-                    extension == ".jpeg" || 
-                    extension == ".ico")
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            var files = dir.GetFiles();
-            var icon = files.FirstOrDefault(file => MatchExtension(file.Extension));
-
-            if (icon is null) return null;
-
-            return icon.FullName;
-        }
     }
 }

@@ -178,14 +178,7 @@ namespace QuartzAvalonia.Views
                 }
             }
 
-            //var presetsWindow = new PresetsView()
-            //{
-            //    DataContext = new PresetsViewModel(preset)
-            //};
-
-            //presetsWindow.ShowDialog(this);
-
-            var server = await PresetsView.ShowPresets(this, preset);
+            var server = await PresetsWindow.ShowPresets(this, preset);
             if (server != null) 
             {
                 Quartz.LoadServer(server.Value.Path);

@@ -3,89 +3,73 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:vm="using:QuartzAvalonia.ViewModels"
-		x:DataType="vm:PresetsViewModel"
+		xmlns:titlebar="using:QuartzAvalonia.Views.TitleBar"
+		xmlns:local="using:QuartzAvalonia.Views"
+		x:DataType="vm:PresetsWindowViewModel"
         mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="450"
 		Width="720" Height="450" CanResize="False" WindowStartupLocation="CenterOwner"
-        x:Class="QuartzAvalonia.Views.PresetsView" ExtendClientAreaToDecorationsHint="True"
+        x:Class="QuartzAvalonia.Views.PresetsWindow" 
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
         Title="Presets" Icon="/Assets/quartz-logo.ico">
 	<Design.DataContext>
-		<vm:PresetsViewModel/>
+		<vm:PresetsWindowViewModel/>
 	</Design.DataContext>
 
+	<Border BorderBrush="Gray" 
+			BorderThickness="1"
+			CornerRadius="3">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="35"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+			<titlebar:WindowsTitleBar Grid.Row="0" Title="Presets" />
+			
+			<Panel Grid.Row="1">
+				<Border Padding="6">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"></RowDefinition>
+							<RowDefinition Height="60"></RowDefinition>
+						</Grid.RowDefinitions>
 
-		<StackPanel Orientation="Horizontal" Spacing="10" Grid.Row="0" Margin="5 0">
-			<Image Source="/Assets/quartz-logo.ico"
-				   HorizontalAlignment="Left"
-				   VerticalAlignment="Center"
-				   Width="25"/>
-			<TextBlock VerticalAlignment="Center" 
-					   FontSize="18" 
-					   FontWeight="Bold">Presets</TextBlock>
-		</StackPanel>
-		
-		<Panel Grid.Row="1">
-			<Border BorderBrush="Gray" BorderThickness="2" 
-					CornerRadius="3" Padding="6">
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="*"></RowDefinition>
-						<RowDefinition Height="60"></RowDefinition>
-					</Grid.RowDefinitions>
-
-					<ScrollViewer>
-						<ItemsRepeater Items="{Binding Servers}" Grid.Column="0">
-							<ItemsRepeater.Layout>
-								<WrapLayout Orientation="Horizontal"
-											HorizontalSpacing="10" 
-											VerticalSpacing="10" />
-							</ItemsRepeater.Layout>
+						<ScrollViewer>
+							<ItemsRepeater Items="{Binding PresetServers}" Grid.Column="0">
+								<ItemsRepeater.Layout>
+									<WrapLayout Orientation="Horizontal"
+												HorizontalSpacing="10" 
+												VerticalSpacing="10" />
+								</ItemsRepeater.Layout>
 				
-							<ItemsRepeater.ItemTemplate>
-								<DataTemplate>
-									<Border BorderBrush="Gray" BorderThickness="2" CornerRadius="3">
-										<Button ClipToBounds="True" 
-												Command="{Binding $parent[Window].DataContext.Load}" 
-												CommandParameter="{Binding Index}">
-											<Panel>
-												<Button HorizontalAlignment="Right" VerticalAlignment="Top"
-														Command="{Binding $parent[Window].DataContext.DeletePreset}" 
-														CommandParameter="{Binding Index}">
-													<Image Width="12" Height="16" Source="/Assets/Close-Icon-64x64.png" />
-												</Button>
-												<StackPanel Spacing="6" Width="140" Height="90">
-													<Image Width="32" Source="/Assets/MinecraftIcon_128x128.png" HorizontalAlignment="Left"/>
-													<TextBlock Text="{Binding Server.Name}" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
-													<TextBlock Text="{Binding Server.Path}" Opacity="0.4" FontSize="12" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"/>
-												</StackPanel>
-											</Panel>
-										</Button>
-									</Border>
-								</DataTemplate>
-							</ItemsRepeater.ItemTemplate>
-						</ItemsRepeater>
-					</ScrollViewer>
-				</Grid>
-			</Border>
-			<StackPanel Height="50" HorizontalAlignment="Right"
-						VerticalAlignment="Bottom" Spacing="5"
-						Orientation="Horizontal" Margin="10" Grid.Row="1">
-				<TextBox Width="200" FontSize="20" Watermark="Preset Name..."
-						 Height="50" HorizontalContentAlignment="Center"
-						 VerticalContentAlignment="Center" Text="{Binding PresetName}"
-						 HorizontalAlignment="Right" VerticalAlignment="Bottom"></TextBox>
-				<Button Content="+" Margin="0" Padding="15 5" FontSize="32"
-					HorizontalAlignment="Right" Command="{Binding CreatePreset}"
-					VerticalAlignment="Bottom" />
-			</StackPanel>
-		</Panel>
-	</Grid>
+								<ItemsRepeater.ItemTemplate>
+									<DataTemplate>
+										<local:PresetView />
+									</DataTemplate>
+								</ItemsRepeater.ItemTemplate>
+							</ItemsRepeater>
+						</ScrollViewer>
+					</Grid>
+				</Border>
+			
+				<StackPanel Height="50" HorizontalAlignment="Right"
+							VerticalAlignment="Bottom" Spacing="5"
+							Orientation="Horizontal" Margin="10" Grid.Row="1">
+					<TextBox Width="200" FontSize="20" Watermark="Preset Name..."
+							 Height="50" HorizontalContentAlignment="Center"
+							 VerticalContentAlignment="Center" Text="{Binding PresetName}"
+							 HorizontalAlignment="Right" VerticalAlignment="Bottom"></TextBox>
+					<Button Content="+" Margin="0" Padding="15 5" FontSize="32"
+						HorizontalAlignment="Right" Command="{Binding CreatePreset}"
+						VerticalAlignment="Bottom" />
+				</StackPanel>
+			</Panel>
+		</Grid>
+	</Border>
+	
 </Window>

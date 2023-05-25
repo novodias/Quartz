@@ -15,13 +15,13 @@ using QuartzAvalonia.Views;
 
 namespace QuartzAvalonia.ViewModels
 {
-    public class PresetsViewModel : ViewModelBase
+    public class PresetsWindowViewModel : ViewModelBase
     {   
         public PresetsConfiguration Presets { get; set; }
-        public ObservableCollection<ServersModel> Servers { get; }
+        public ObservableCollection<PresetViewModel> PresetServers { get; }
 
-        public Server? PresetServer { get; }
-        public Server? Server { get; set; }
+        public Server? NewServer { get; }
+        public Server? SelectedServer { get; set; }
 
         private string? _presetName;
         public string? PresetName 
@@ -30,30 +30,30 @@ namespace QuartzAvalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _presetName, value);
         }
 
-        public PresetsViewModel()
+        public PresetsWindowViewModel()
         {
             Presets = PresetsConfiguration.LoadOrCreate();
-            PresetServer = null;
-            Servers = new();
+            NewServer = null;
+            PresetServers = new();
             LoadPresets();
         }
 
-        public PresetsViewModel(Server? server = null)
+        public PresetsWindowViewModel(Server? server = null)
         {
             Presets = PresetsConfiguration.LoadOrCreate();
-            PresetServer = server;
-            Servers = new();
+            NewServer = server;
+            PresetServers = new();
             LoadPresets();
         }
 
         public void Load(int index)
         {
-            var server = Servers[index].Server;
-            Server = server;
+            var server = PresetServers[index].Server;
+            SelectedServer = server;
             
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var preset = desktop.Windows.FirstOrDefault(window => window is PresetsView);
+                var preset = desktop.Windows.FirstOrDefault(window => window is PresetsWindow);
                 preset?.Close();
             }
         }
@@ -61,14 +61,14 @@ namespace QuartzAvalonia.ViewModels
         public void DeletePreset(int index)
         {
             //var model = Servers[index];
-            var model = Servers.FirstOrDefault(m => m.Index == index);
+            var model = PresetServers.FirstOrDefault(m => m.Index == index);
 
             if (model == null)
             {
                 return;
             }
 
-            Servers.Remove(model);
+            PresetServers.Remove(model);
             Presets.Remove(model.Server);
             Presets.Save();
         }
@@ -78,14 +78,20 @@ namespace QuartzAvalonia.ViewModels
             int index = 0;
             foreach (var preset in Presets.Servers)
             {
-                Servers.Add(new ServersModel(preset, index++));
+                var presetModel = new PresetViewModel(new ServerModel(preset, index++));
+                PresetServers.Add(presetModel);
+            }
+
+            foreach (var preset in PresetServers)
+            {
+                preset.LoadIcon();
             }
         }
 
         public void CreatePreset()
         {
-            if (!PresetServer.HasValue) return;
-            var server = PresetServer.Value;
+            if (!NewServer.HasValue) return;
+            var server = NewServer.Value;
 
             if (!string.IsNullOrWhiteSpace(PresetName))
             {
@@ -93,11 +99,13 @@ namespace QuartzAvalonia.ViewModels
                 server.Name = name;
             }
 
-            var index = Servers.Count;
-            var model = new ServersModel(server, index);
-            Servers.Add(model);
+            var index = PresetServers.Count;
+            var model = new PresetViewModel(new ServerModel(server, index));
+            PresetServers.Add(model);
             Presets.Add(server);
             Presets.Save();
+
+            model.LoadIcon();
         }
     }
 }

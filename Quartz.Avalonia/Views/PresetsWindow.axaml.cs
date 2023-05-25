@@ -5,24 +5,23 @@ using System.Threading.Tasks;
 
 namespace QuartzAvalonia.Views;
 
-public partial class PresetsView : Window
+public partial class PresetsWindow : Window
 {
-    public PresetsView()
+    public PresetsWindow()
     {
         InitializeComponent();
     }
 
     public static async Task<Server?> ShowPresets(Window parent, Server? preset = null)
     {
-        var tcs = new TaskCompletionSource<Server?>();
-        var presetsWindow = new PresetsView()
+        var presetsWindow = new PresetsWindow()
         {
-            DataContext = new PresetsViewModel(preset)
+            DataContext = new PresetsWindowViewModel(preset)
         };
 
         await presetsWindow.ShowDialog(parent);
-        var viewModel = (presetsWindow.DataContext as PresetsViewModel);
+        var viewModel = (presetsWindow.DataContext as PresetsWindowViewModel);
 
-        return viewModel!.Server;
+        return viewModel!.SelectedServer;
     }
 }
