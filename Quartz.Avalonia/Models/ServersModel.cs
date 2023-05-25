@@ -13,7 +13,7 @@ namespace QuartzAvalonia.Models
     {
         public Server Server { get; set; }
         public int Index { get; private set; }
-        private static string DefaultIcon { get; } = Path.Combine(AppContext.BaseDirectory, "/data/MinecraftIcon_128x128.png");
+        private static string DefaultIcon { get; } = AppContext.BaseDirectory + "/data/MinecraftIcon_128x128.png";
 
         public ServerModel(Server server, int index)
         {
