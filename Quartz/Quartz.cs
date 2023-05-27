@@ -299,10 +299,24 @@ public class Quartz : IDisposable
             return;
         }
 
-        var text = data;
-        text = text.Remove(0, text.LastIndexOf(':') + 2);
-        var split = text.Split(' ');
-        var player = split[0].Trim();
+        //var text = data;
+        //text = text.Remove(0, text.LastIndexOf(':') + 2);
+        //var split = text.Split(' ');
+        //var player = split[0].Trim();
+
+        var split = data.Split(' ');
+        var player = string.Empty;
+
+        for (int i = 0; i < split.Length; i++)
+        {
+            var item = split[i].ToLower();
+            if (item == "joined" || item == "left")
+            {
+                player = split[i - 1];
+            }
+        }
+
+        if (string.IsNullOrEmpty(player)) return;
 
         var playerEventArgs = new PlayerEventArgs(player);
 
