@@ -178,7 +178,7 @@ namespace QuartzAvalonia.Views
                 }
             }
 
-            var server = await PresetsWindow.ShowPresets(this, preset);
+            var server = await PresetsWindowView.ShowPresets(this, Quartz.Javas, preset);
             if (server != null) 
             {
                 Quartz.LoadServer(server.Value.Path);

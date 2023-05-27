@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="QuartzAvalonia.Views.TitleBar.WindowsTitleBar">
-	<StackPanel>
-		<Grid>
+	<StackPanel ClipToBounds="True">
+		<Grid ClipToBounds="True">
 			<DockPanel Background="Gray" Name="TitleBarBackground" />
 			<DockPanel Name="TitleBar">
 				<StackPanel Orientation="Horizontal"
@@ -24,7 +24,7 @@
 							Height="30"
 							HorizontalContentAlignment="Center"
 							VerticalContentAlignment="Center"
-							BorderThickness="0"
+							BorderThickness="0" ClipToBounds="True"
 							Name="MinimizeButton"
 							ToolTip.Tip="Minimize">
 						<Button.Resources>
@@ -47,7 +47,7 @@
 					<Button Width="46"
 							VerticalAlignment="Stretch"
 							VerticalContentAlignment="Center"
-							BorderThickness="0"
+							BorderThickness="0" ClipToBounds="True"
 							Name="MaximizeButton">
 						<ToolTip.Tip>
 							<ToolTip Content="Maximize"
@@ -75,7 +75,7 @@
 					<Button Width="46"
 							VerticalAlignment="Stretch"
 							VerticalContentAlignment="Center"
-							BorderThickness="0"
+							BorderThickness="0" ClipToBounds="True"
 							Name="CloseButton"
 							ToolTip.Tip="Close">
 						<Button.Resources>

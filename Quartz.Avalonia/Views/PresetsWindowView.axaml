@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:QuartzAvalonia.ViewModels"
+		xmlns:titlebar="using:QuartzAvalonia.Views.TitleBar"
+		xmlns:local="using:QuartzAvalonia.Views"
+        mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="450"
+        x:Class="QuartzAvalonia.Views.PresetsWindowView" 
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+		Width="720" Height="450" CanResize="False" WindowStartupLocation="CenterOwner"
+        Title="Presets" Icon="/Assets/quartz-logo.ico">
+
+	<Border BorderBrush="Gray"
+			BorderThickness="1"
+			CornerRadius="3">
+		<DockPanel>
+			<titlebar:WindowsTitleBar DockPanel.Dock="Top" Grid.Row="0" ClipToBounds="True" Title="Presets" />
+			<UserControl Content="{Binding Content}"/>
+		</DockPanel>
+	</Border>
+	
+	<!--<Border BorderBrush="Gray" 
+			BorderThickness="1"
+			CornerRadius="3">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+			<titlebar:WindowsTitleBar Grid.Row="0" ClipToBounds="True" Title="Presets" />
+			
+			
+		</Grid>
+	</Border>-->
+	
+</Window>

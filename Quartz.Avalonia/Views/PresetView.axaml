@@ -2,19 +2,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:QuartzAvalonia.ViewModels"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="QuartzAvalonia.Views.PresetView">
+	<Design.DataContext>
+		<vm:PresetViewModel></vm:PresetViewModel>
+	</Design.DataContext>
+	
 	<StackPanel>
-		<Border BorderBrush="Gray" BorderThickness="2" CornerRadius="3" ClipToBounds="True">
+		<Border BorderBrush="{Binding Brush}" BorderThickness="2" CornerRadius="3" ClipToBounds="True">
 			<Button ClipToBounds="True"
 					Command="{Binding $parent[Window].DataContext.Load}"
 					CommandParameter="{Binding Index}">
 				<Panel>
-					<Button HorizontalAlignment="Right" VerticalAlignment="Top"
-							Command="{Binding $parent[Window].DataContext.DeletePreset}"
-							CommandParameter="{Binding Index}">
-						<Image Width="12" Height="16" Source="/Assets/Close-Icon-64x64.png" />
-					</Button>
+					<StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right" VerticalAlignment="Top">
+						
+						<Button ClipToBounds="True"
+								Command="{Binding $parent[Window].DataContext.DeletePreset}"
+								CommandParameter="{Binding Index}">
+							<Button.Styles>
+								<Style Selector="Button">
+									<Setter Property="Background" Value="Crimson" />
+								</Style>
+							</Button.Styles>
+							
+								<Image Width="16" Height="16" Source="/Assets/Delete-Icon-24x24.png" />
+						</Button>
+						<Button 
+								Command="{Binding $parent[Window].DataContext.SelectSettings}"
+								CommandParameter="{Binding Index}">
+							<Image Width="16" Height="16" Source="/Assets/Settings-Icon.png" />
+						</Button>
+					</StackPanel>
 					<StackPanel Spacing="6" Width="140" Height="90">
 						<Image Width="32" Source="{Binding Icon}" HorizontalAlignment="Left"/>
 						<TextBlock Text="{Binding Name}" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>

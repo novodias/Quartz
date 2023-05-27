@@ -50,8 +50,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\PresetsWindow.axaml.cs">
-      <DependentUpon>PresetsWindow.axaml</DependentUpon>
+    <Compile Update="Views\PresetsWindowView.axaml.cs">
+      <DependentUpon>PresetsWindowView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

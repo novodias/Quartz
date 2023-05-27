@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="QuartzAvalonia.Views.PresetSettingsView">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		
+		<StackPanel Orientation="Vertical" Grid.Row="0"
+					Spacing="8" Margin="10" HorizontalAlignment="Center">
+			
+			<Border BorderBrush="Transparent" 
+					Width="100" Padding="10"
+					CornerRadius="8"
+					HorizontalAlignment="Center">
+				<Image Source="{Binding	Icon}" 
+					   Width="86" Height="86"
+					   HorizontalAlignment="Center" VerticalAlignment="Center" />
+			</Border>
+			<TextBlock FontWeight="Bold" FontSize="24" HorizontalAlignment="Center">Settings</TextBlock>
+			<TextBox Text="{Binding	Name}" Watermark="Name" Width="250" HorizontalAlignment="Center"/>
+			<TextBox Text="{Binding	Memory}" Watermark="Memory (Ex.: 2G/2048M)" Width="250" HorizontalAlignment="Center"/>
+			<StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+				<TextBox Text="{Binding Path}" 
+						 IsReadOnly="True"
+						 Watermark="Path" 
+						 Width="200"/>
+				<Button>
+					<Image Source="/Assets/Save-Icon-24x24.png" Width="24" Height="24" />
+				</Button>
+			</StackPanel>
+			<ComboBox Items="{Binding JavaCollection}" 
+					  SelectedIndex="{Binding JavaIndex}" 
+					  Width="250" PlaceholderText="Java Runtime Path">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+		</StackPanel>
+
+		<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10"
+					HorizontalAlignment="Right" VerticalAlignment="Bottom" Spacing="8">
+			<Button HorizontalAlignment="Center" VerticalAlignment="Center"
+					Command="{Binding $parent[Window].DataContext.SetPresetsView}">
+				<StackPanel Orientation="Horizontal" Spacing="8">
+					<Image Source="/Assets/ArrowLeft-Icon-24x24.png"
+							Width="24" Height="24"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Center" />
+					<TextBlock HorizontalAlignment="Center"
+							   VerticalAlignment="Center">Return</TextBlock>
+				</StackPanel>
+			</Button>
+			
+			<Button Command="{Binding $parent[Window].DataContext.SaveSettingsPreset}">
+				<StackPanel Orientation="Horizontal" Spacing="8">
+					<Image Source="/Assets/Save-Icon-24x24.png" Width="24"></Image>
+					<TextBlock HorizontalAlignment="Center" 
+							   VerticalAlignment="Center">Save</TextBlock>
+				</StackPanel>
+			</Button>
+
+		</StackPanel>
+	</Grid>
+</UserControl>

@@ -12,100 +12,62 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using QuartzAvalonia.Views;
+using Avalonia.Controls;
+using AvaloniaEdit.Utils;
 
 namespace QuartzAvalonia.ViewModels
 {
     public class PresetsWindowViewModel : ViewModelBase
-    {   
-        public PresetsConfiguration Presets { get; set; }
-        public ObservableCollection<PresetViewModel> PresetServers { get; }
-
-        public Server? NewServer { get; }
-        public Server? SelectedServer { get; set; }
-
-        private string? _presetName;
-        public string? PresetName 
-        {
-            get => _presetName;
-            set => this.RaiseAndSetIfChanged(ref _presetName, value);
-        }
+    {
+        public Server? SelectedServer { get => Presets.SelectedServer; }
+        private readonly IList<string> JavaCollection;
 
         public PresetsWindowViewModel()
         {
-            Presets = PresetsConfiguration.LoadOrCreate();
-            NewServer = null;
-            PresetServers = new();
-            LoadPresets();
+            Content = Presets = new PresetsViewModel();
+            JavaCollection = new List<string>();
         }
 
-        public PresetsWindowViewModel(Server? server = null)
+        public PresetsWindowViewModel(IList<string> javaCollection, Server? newServer = null) 
         {
-            Presets = PresetsConfiguration.LoadOrCreate();
-            NewServer = server;
-            PresetServers = new();
-            LoadPresets();
+            Content = Presets = new PresetsViewModel(newServer);
+            JavaCollection = javaCollection;
         }
 
-        public void Load(int index)
+
+        ViewModelBase content;
+        public ViewModelBase Content
         {
-            var server = PresetServers[index].Server;
-            SelectedServer = server;
-            
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var preset = desktop.Windows.FirstOrDefault(window => window is PresetsWindow);
-                preset?.Close();
-            }
+            get => content;
+            private set => this.RaiseAndSetIfChanged(ref content, value);
         }
 
-        public void DeletePreset(int index)
+        public PresetsViewModel Presets { get; }
+
+        public void Load(int index) => Presets.Load(index);
+        public void DeletePreset(int index) => Presets.DeletePreset(index);
+        public void SelectSettings(int index)
         {
-            //var model = Servers[index];
-            var model = PresetServers.FirstOrDefault(m => m.Index == index);
+            Presets.SelectSettings(index);
 
-            if (model == null)
-            {
-                return;
-            }
-
-            PresetServers.Remove(model);
-            Presets.Remove(model.Server);
-            Presets.Save();
+            Content = PresetSettings = new PresetSettingsViewModel(index, Presets.SettingsServer!, JavaCollection);
         }
 
-        private void LoadPresets()
+        public PresetSettingsViewModel PresetSettings { get; set; }
+        public void SaveSettingsPreset()
         {
-            int index = 0;
-            foreach (var preset in Presets.Servers)
-            {
-                var presetModel = new PresetViewModel(new ServerModel(preset, index++));
-                PresetServers.Add(presetModel);
-            }
+            var preset = PresetSettings.GetNewPreset();
+            var presetIndex = PresetSettings.Index;
 
-            foreach (var preset in PresetServers)
-            {
-                preset.LoadIcon();
-            }
+            Presets.PresetsConfiguration.SetServer(presetIndex, preset.Server);
+            Presets.PresetServers[presetIndex] = preset;
+            Presets.PresetServers[presetIndex].LoadIcon();
+            Presets.PresetsConfiguration.Save();
         }
 
-        public void CreatePreset()
+        public void SetPresetsView()
         {
-            if (!NewServer.HasValue) return;
-            var server = NewServer.Value;
-
-            if (!string.IsNullOrWhiteSpace(PresetName))
-            {
-                var name = PresetName.Trim();
-                server.Name = name;
-            }
-
-            var index = PresetServers.Count;
-            var model = new PresetViewModel(new ServerModel(server, index));
-            PresetServers.Add(model);
-            Presets.Add(server);
-            Presets.Save();
-
-            model.LoadIcon();
+            Content = Presets;
         }
     }
 }

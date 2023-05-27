@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using QuartzAvalonia.Views.TitleBar;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -41,6 +42,8 @@ public partial class MessageBox : Window
         };
 
         box.FindControl<TextBlock>("TextBlock").Text = text;
+        box.FindControl<WindowsTitleBar>("TitleBar").Title = title;
+
         var buttonsPanel = box.FindControl<StackPanel>("Buttons");
         var result = MessageBoxResult.Ok;
         void AddButton(string caption, MessageBoxResult r, bool def = false)

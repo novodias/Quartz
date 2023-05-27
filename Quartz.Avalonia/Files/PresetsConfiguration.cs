@@ -38,6 +38,10 @@ namespace QuartzAvalonia.Files
         }
 
         public Server this[int index] => Servers[index];
+        public void SetServer(int index, Server value)
+        {
+            _servers[index] = value;
+        }
 
         [JsonIgnore] public int Count => Servers.Count;
 

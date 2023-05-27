@@ -1,22 +1,24 @@
 using Avalonia.Controls;
 using QuartzAvalonia.Files;
 using QuartzAvalonia.ViewModels;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace QuartzAvalonia.Views;
 
-public partial class PresetsWindow : Window
+public partial class PresetsWindowView : Window
 {
-    public PresetsWindow()
+    public PresetsWindowView()
     {
         InitializeComponent();
     }
 
-    public static async Task<Server?> ShowPresets(Window parent, Server? preset = null)
+    public static async Task<Server?> ShowPresets(Window parent, IList<string> javaCollection, Server? preset = null)
     {
-        var presetsWindow = new PresetsWindow()
+        var presetsWindow = new PresetsWindowView()
         {
-            DataContext = new PresetsWindowViewModel(preset)
+            DataContext = new PresetsWindowViewModel(javaCollection, preset)
         };
 
         await presetsWindow.ShowDialog(parent);
