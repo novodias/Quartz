@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using QuartzAvalonia.Files;
 using Discord;
 using QuartzAvalonia.ViewModels;
+using Quartz.Avalonia;
 
 namespace QuartzAvalonia.Views
 {
@@ -107,9 +108,11 @@ namespace QuartzAvalonia.Views
             SetupProcessRuntime();
             #pragma warning restore
             ServerStatus.Background = new SolidColorBrush(Avalonia.Media.Color.Parse("#1cac39"));
-            Kill.IsEnabled = true;
-            Open.IsEnabled = false;
+            Kill.Background = SolidColorBrush.Parse("#DC143C");
+            PresetsButton.IsEnabled = false;
             Start.IsEnabled = false;
+            Open.IsEnabled = false;
+            Kill.IsEnabled = true;
             Send.IsEnabled = true;
             Clear.IsEnabled = true;
         }
@@ -117,11 +120,13 @@ namespace QuartzAvalonia.Views
         private void OnProcessExited(object? sender, EventArgs e)
         {
             ServerStatus.Background = new SolidColorBrush(Avalonia.Media.Color.Parse("#DC143C"));
+            Kill.Background = SolidColorBrush.Parse("#808080");
             Send.IsEnabled = false;
             Clear.IsEnabled = false;
             Kill.IsEnabled = false;
             Open.IsEnabled = true;
             Start.IsEnabled = true;
+            PresetsButton.IsEnabled = true;
         }
 
         public void OnPlayerJoined(object? sender, Quartz.PlayerEventArgs e)
@@ -313,7 +318,7 @@ namespace QuartzAvalonia.Views
                 return;
             }
 
-            var result = await OpenDialogAsync(this, true);
+            var result = await OpenFile.SearchJarAsync(this, true);
 
             if (result is null) 
             {

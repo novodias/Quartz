@@ -12,6 +12,7 @@ using AvaloniaEdit.Rendering;
 using Avalonia.Collections;
 using System.Collections.ObjectModel;
 using QuartzAvalonia.Files;
+using Quartz.Avalonia;
 
 namespace QuartzAvalonia.Views
 {
@@ -122,30 +123,9 @@ namespace QuartzAvalonia.Views
             return Task.CompletedTask;
         }
 
-        private async Task<string[]?> OpenDialogAsync(Window parent, bool allowMultiple = false)
-        {
-            var window = new OpenFileDialog();
-            window.Title = "Select your jar file";
-            window.Directory = AppContext.BaseDirectory;
-            window.Filters = new List<FileDialogFilter>()
-            {
-                new FileDialogFilter() { Name = "Jar", Extensions = { "jar" }}
-            };
-            window.AllowMultiple = allowMultiple;
-
-            var result = await window.ShowAsync(parent);
-
-            if (result is null)
-            {
-                return null;
-            }
-
-            return result;
-        }
-
         public async void OpenServerCommand(object? sender, RoutedEventArgs e)
         {
-            var result = await OpenDialogAsync(this);
+            var result = await OpenFile.SearchJarAsync(this);
 
             if (result == null)
             {

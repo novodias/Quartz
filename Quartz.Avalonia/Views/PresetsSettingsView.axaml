@@ -17,12 +17,12 @@
 		<StackPanel Orientation="Vertical" Grid.Row="0"
 					Spacing="8" Margin="10" HorizontalAlignment="Center">
 			
-			<Border BorderBrush="Transparent" 
-					Width="100" Padding="10"
+			<Border BorderBrush="Transparent"
 					CornerRadius="8"
-					HorizontalAlignment="Center">
+					HorizontalAlignment="Center"
+					ClipToBounds="True" Background="Gray">
 				<Image Source="{Binding	Icon}" 
-					   Width="86" Height="86"
+					   Width="86" Height="86" ClipToBounds="True"
 					   HorizontalAlignment="Center" VerticalAlignment="Center" />
 			</Border>
 			<TextBlock FontWeight="Bold" FontSize="24" HorizontalAlignment="Center">Settings</TextBlock>
@@ -33,7 +33,7 @@
 						 IsReadOnly="True"
 						 Watermark="Path" 
 						 Width="200"/>
-				<Button>
+				<Button Command="{Binding $parent[Window].DataContext.SetPath}">
 					<Image Source="/Assets/Save-Icon-24x24.png" Width="24" Height="24" />
 				</Button>
 			</StackPanel>

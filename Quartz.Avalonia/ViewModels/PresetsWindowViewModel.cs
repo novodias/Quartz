@@ -14,6 +14,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using QuartzAvalonia.Views;
 using Avalonia.Controls;
 using AvaloniaEdit.Utils;
+using Quartz.Avalonia;
 
 namespace QuartzAvalonia.ViewModels
 {
@@ -68,6 +69,14 @@ namespace QuartzAvalonia.ViewModels
         public void SetPresetsView()
         {
             Content = Presets;
+        }
+
+        public async void SetPath()
+        {
+            var desktop = (Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)!;
+            var window = desktop.Windows.First(w => w is PresetsWindowView);
+            var result = await OpenFile.SearchJarAsync(window);
+            PresetSettings.Path = result != null ? result[0] : PresetSettings.Path;
         }
     }
 }
