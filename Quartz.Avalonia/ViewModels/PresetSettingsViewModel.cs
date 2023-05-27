@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using QuartzAvalonia.Files;
 using QuartzAvalonia.Models;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,8 +41,14 @@ namespace QuartzAvalonia.ViewModels
             return new PresetViewModel(new ServerModel(_server, Index));
         }
 
+        private string _path;
+
         public string Name { get; set; }
-        public string Path { get; set; }
+        public string Path 
+        {
+            get => _path;
+            set => this.RaiseAndSetIfChanged(ref _path, value);
+        }
         public string Memory { get; set; }
         public int JavaIndex { get; set; }
         public Bitmap? Icon => Preset.Icon;
