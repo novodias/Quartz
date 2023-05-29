@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Quartz;
@@ -103,6 +104,11 @@ public class Quartz : IDisposable
 
         using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
         {
+            if (rk is null)
+            {
+                return "";
+            }
+
             string currentVersion = rk.GetValue("CurrentVersion").ToString();
             using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
             {
@@ -159,15 +165,28 @@ public class Quartz : IDisposable
         //    }
         //}
 
-        javas.Add(GetJavaRegistryValue("Java Runtime Environment"));
-        javas.Add(GetJavaRegistryValue("JDK"));
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            var javaRuntime = GetJavaRegistryValue("Java Runtime Environment");
+            var jdk = GetJavaRegistryValue("JDK");
+        
+            if (!string.IsNullOrEmpty(javaRuntime))
+            {
+                javas.Add(javaRuntime);
+            }
+
+            if (!string.IsNullOrEmpty(jdk))
+            {
+                javas.Add(jdk);
+            }
+        }
 
         javasFile = new(Path.Join(baseDir.FullName, "javalocations.txt"));
 
         using var sw = javasFile.CreateText();
         foreach (var text in javas)
         {
-            sw.WriteLine(text);
+            sw.Write(text);
         }
 
         javas.Remove(textInfo);
