@@ -138,5 +138,13 @@ namespace QuartzAvalonia.ViewModels
         {
             SettingsServer = PresetServers[index];
         }
+
+        public void Dispose()
+        {
+            foreach (var preset in PresetServers)
+            {
+                preset.Dispose();
+            }
+        }
     }
 }

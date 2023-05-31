@@ -80,5 +80,10 @@ namespace QuartzAvalonia.ViewModels
         public int JavaIndex => Server.JavaIndex;
         public string Memory => Server.Memory;
         public int Index => _model.Index;
+
+        public void Dispose()
+        {
+            Icon.Dispose();
+        }
     }
 }

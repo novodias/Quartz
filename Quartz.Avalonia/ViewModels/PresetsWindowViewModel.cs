@@ -20,17 +20,29 @@ namespace QuartzAvalonia.ViewModels
 {
     public class PresetsWindowViewModel : ViewModelBase
     {
+        Window Window;
         public Server? SelectedServer { get => Presets.SelectedServer; }
         private readonly IList<string> JavaCollection;
 
-        public PresetsWindowViewModel()
+        public PresetsWindowViewModel(Window window)
         {
+            Window = window;
+            Window.Closed += OnClosed;
+
             Content = Presets = new PresetsViewModel();
             JavaCollection = new List<string>();
         }
 
-        public PresetsWindowViewModel(IList<string> javaCollection, Server? newServer = null) 
+        private void OnClosed(object? sender, EventArgs e)
         {
+            Presets.Dispose();
+        }
+
+        public PresetsWindowViewModel(Window window, IList<string> javaCollection, Server? newServer = null) 
+        {
+            Window = window;
+            Window.Closed += OnClosed;
+
             Content = Presets = new PresetsViewModel(newServer);
             JavaCollection = javaCollection;
         }

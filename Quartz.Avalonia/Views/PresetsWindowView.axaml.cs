@@ -16,10 +16,8 @@ public partial class PresetsWindowView : Window
 
     public static async Task<Server?> ShowPresets(Window parent, IList<string> javaCollection, Server? preset = null)
     {
-        var presetsWindow = new PresetsWindowView()
-        {
-            DataContext = new PresetsWindowViewModel(javaCollection, preset)
-        };
+        var presetsWindow = new PresetsWindowView();
+        presetsWindow.DataContext = new PresetsWindowViewModel(presetsWindow, javaCollection, preset);
 
         await presetsWindow.ShowDialog(parent);
         var viewModel = (presetsWindow.DataContext as PresetsWindowViewModel);
