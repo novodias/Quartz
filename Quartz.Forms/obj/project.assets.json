@@ -129,10 +129,7 @@
         },
         "runtime": {
           "bin/placeholder/QuartzLib.dll": {}
-        },
-        "frameworkReferences": [
-          "Microsoft.WindowsDesktop.App.WindowsForms"
-        ]
+        }
       }
     }
   },
