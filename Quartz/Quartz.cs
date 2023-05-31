@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Win32;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -96,23 +97,36 @@ public class Quartz : IDisposable
         _server = file;
     }
 
-    public static string GetJavaRegistryValue(string directory)
+    private static RegistryKey? GetRegistryKey(string directory)
     {
-        //string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-        
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return null;
+        }
+
+        return Registry.LocalMachine.OpenSubKey(directory);
+    }
+
+    private static string GetJavaRegistryValue(string directory)
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return "";
+        }
+
         string javaKey = $@"SOFTWARE\JavaSoft\{directory}";
 
-        using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+        using (RegistryKey? rk = Registry.LocalMachine.OpenSubKey(javaKey))
         {
             if (rk is null)
             {
                 return "";
             }
 
-            string currentVersion = rk.GetValue("CurrentVersion").ToString();
-            using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+            string? currentVersion = rk.GetValue("CurrentVersion")!.ToString();
+            using (RegistryKey? key = rk.OpenSubKey(currentVersion))
             {
-                return key.GetValue("JavaHome").ToString();
+                return key.GetValue("JavaHome")!.ToString();
             }
         }
     }
@@ -139,47 +153,68 @@ public class Quartz : IDisposable
             textInfo
         };
 
+        void AddJava(string? java)
+        {
+            if (!string.IsNullOrEmpty(java))
+            {
+                javas.Add(java);
+            }
+        }
+
+        static IList<string> GetEclipseAdoptiumPath()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return Array.Empty<string>();
+            }
+
+            using var mainKey = GetRegistryKey(@"SOFTWARE\Eclipse Adoptium\JDK");
+            
+            if (mainKey is null)
+            {
+                return Array.Empty<string>();
+            }
+
+            var subKeys = mainKey.GetSubKeyNames();
+
+            var paths = new List<string>();
+            foreach (var path in subKeys)
+            {
+                using var versionKey = GetRegistryKey(path);
+                
+                if (versionKey is null)
+                {
+                    continue;
+                }
+
+                using var subKey = versionKey.OpenSubKey(@"hotspot\MSI");
+
+                if (subKey is null)
+                {
+                    continue;
+                }
+
+                var pathJava = subKey.GetValue("Path")!.ToString();
+
+                if (pathJava is not null)
+                {
+                    paths.Add(pathJava);
+                }
+            }
+
+            return paths;
+        }
+
         string? environmentPath = Environment.GetEnvironmentVariable("JAVA_HOME");
-        if (!string.IsNullOrEmpty(environmentPath))
-        {
-            javas.Add(environmentPath);
-        }
+        AddJava(environmentPath);
 
-        //string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-        //using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
-        //{
-        //    string currentVersion = rk.GetValue("CurrentVersion").ToString();
-        //    using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
-        //    {
-        //        javas.Add(key.GetValue("JavaHome").ToString());
-        //    }
-        //}
-
-        //string JDK = "SOFTWARE\\JavaSoft\\JDK\\";
-        //using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(JDK))
-        //{
-        //    string currentVersion = rk.GetValue("CurrentVersion").ToString();
-        //    using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
-        //    {
-        //        javas.Add(key.GetValue("JavaHome").ToString());
-        //    }
-        //}
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            var javaRuntime = GetJavaRegistryValue("Java Runtime Environment");
-            var jdk = GetJavaRegistryValue("JDK");
+        var javaRuntime = GetJavaRegistryValue("Java Runtime Environment");
+        var jdk = GetJavaRegistryValue("JDK");
         
-            if (!string.IsNullOrEmpty(javaRuntime))
-            {
-                javas.Add(javaRuntime);
-            }
-
-            if (!string.IsNullOrEmpty(jdk))
-            {
-                javas.Add(jdk);
-            }
-        }
+        AddJava(javaRuntime);
+        AddJava(jdk);
+        Javas.AddRange(GetEclipseAdoptiumPath());
+        
 
         javasFile = new(Path.Join(baseDir.FullName, "javalocations.txt"));
 
